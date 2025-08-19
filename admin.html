@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    #login-area { text-align: center; margin-top: 3rem; }
+    #dashboard { display: none; }
+    iframe { width: 100%; height: 600px; border: 1px solid #ccc; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel (Trial)</h1>
+
+  <!-- Login -->
+  <div id="login-area">
+    <button id="loginBtn">Login dengan Google</button>
+    <button id="logoutBtn" style="display:none;">Logout</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <h2>Selamat datang, Admin!</h2>
+    <p>Ini preview portfolio:</p>
+    <iframe src="https://raihannifel.github.io/portfolio"></iframe>
+  </div>
+
+  <script type="module">
+    // 🔑 Config Firebase (ganti sesuai project Firebase kamu)
+    const firebaseConfig = {
+      apiKey: "API_KEY",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    // Init
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } 
+      from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const allowedEmail = "emailkamu@gmail.com"; // ganti dengan email kamu
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      signInWithPopup(auth, provider).then(result => {
+        if (result.user.email === allowedEmail) {
+          document.getElementById("dashboard").style.display = "block";
+          document.getElementById("loginBtn").style.display = "none";
+          document.getElementById("logoutBtn").style.display = "inline-block";
+        } else {
+          alert("Kamu tidak punya akses!");
+          signOut(auth);
+        }
+      });
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      signOut(auth).then(() => location.reload());
+    });
+  </script>
+</body>
+</html>
